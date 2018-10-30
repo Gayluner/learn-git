@@ -1,2 +1,4 @@
 1、默认编码为现在就是
 test.git
+git is a distrabuted Version control system 
+git is free software
