@@ -1,0 +1,131 @@
+1、创建指定本机git的用户名和邮箱
+	git --global user.name "username"
+	git --global user.email "xxx@xxx.xxx"
+	默认针对本机所有的git仓库 
+	
+2、创建本地版本库：
+	（1）、创建目录
+	（2）、进入目录，执行git init 
+	
+3、将本地文件添加到本地git仓库
+	（1）、git add xxx
+	（2）、git commit -m "本次提交的说明"
+	
+4、使用git status 查看工作区的状态
+	（1）、如果有内容修改，会提示   modified:   ReadMe.txt
+		可以使用 git diff  "filename" 来查看改动内容
+	（2）、如果已经有文件被add 了，会提示  'Changes to be committed:'
+5、查看提交日志：
+	git log  查看全部的提交日志
+	git log --pretty=oneline   查看 日志，只显示每次commit的commit id和 描述信息
+	git reflog 查看操作日志
+	
+6、版本回退：
+	git reset --hard HAED ^   跳转到上一个版本
+	git reset --hard commit_id   跳转到指定的版本
+
+7、工作区和暂存区
+	工作区：工作区就是我们本地库所在的文件夹
+	版本库：在工作区有一个隐藏的问价夹 .git  这个文件夹就是git的本地版本库
+	git的版本库里面有很多内容，其中最重要的是称为stage （index）的暂存区，还有我们自己创建的第一个分支以及纸箱master的一个指针HEAD
+	
+	
+	
+	
+	git add 实际就是把文件从工作区放到暂存区
+	git commit  其实就是一次性的把暂存区的文件提交到本地分支
+	
+8、git的版本管理，管理的是修改，并非文件。
+	git add 和git commit 提交的其实都是修改
+	git diff  filename和git diff HAED --filename的区别
+	
+	git diff ：如果暂存区该文件相关的修改不为空，那么就讲工作区的文件和暂存区的文件进行对比，如果暂存区的该文件修改为空，那么就讲HEAD版本库的文件和工作区的进行修改
+	git diif HAED ：直接将工作区的文件和版本库当前版本的文件进行
+	
+9、撤销修改
+	git checkout --filename   
+		（1）、如果文件已经修改，但是没有提交到暂存区，那么文件会退回到和当前版本库里面的文件一致
+		（2）、如果文件已经修改且提交，再次修改，那么会退回到第一次提交给暂存区的时候的修改
+	git reset HEAD filename
+		如果文件有修改，且已经使用git add 提交到暂存区，会将暂存区该文件的修改清空
+
+10、删除文件
+	git rm filename 删除文件的时候，本地的文件也会被删除，清理缓存区不会被修改回来
+	
+11、远程
+     1、在远程添加一个git仓库之后，使用
+	 git  remote  add orgin xxxx  将本地的git仓库与远程的git仓库进行关联
+	
+	 git push -u origin master 将本地的master分支推送到远程
+	
+	git push origin master  可以将每次本地git仓库的修改内容推送到远端git仓库
+   2、克隆一个远程git仓库：
+       git clone  git@github.com :xxxxxx
+       克隆远程仓库可以通过ssh 或者https的方式进行
+	
+12分支管理
+   1、创建分支
+     git checkout -b branchname   创建并切换到和这个分支
+     git checkout branchname   切换到该分支
+     git branch  显示当前所在的分支
+     git branch branchname 创建分支
+     git branch -a 显示所有分支
+     git branch -d 删除分支
+     git branch -D 删除一个没有合并的分支
+     git merge branchname 将branchname分支合并到当前分支，快进的方式合并，会看不到合并的记录
+如果合并的时候发现冲突，这个时候想取消merge
+     git reset --hard HEAD
+    2、冲突解决
+       如果出现冲突，会提示冲突文件:
+      
+
+	这个时候，可以进入冲突文件ReadMe.txt查看，会有标记处冲突所在
+	将冲突的地方修改之后 ，git add、 git commit -m 合并就可以了
+	
+	使用非快进的方式合并
+	git merge --no-ff -m "commit info"  branchname
+	
+	查看分支合并的情况
+        git log --graph --pretty=oneline --abbrev-commit
+    3、储存当前分支的工作现场，切换到其他分支处理问题，然后再切换回来
+        git stash  当前分支的工作内容保存
+        git stash list  查看当前工作区的保存列表
+        git stash pop  恢复当前工作区为最后一次保存的内容，并且删除该保存的内容
+        git stash  play  stash@{n}   跳转到对应的保存好的工作状态
+        git stash pop 跳转到上一次保存的内容并且删除
+        git stash drop stash@{n}   删除指定的保存的内容
+        git stash clear 清除stash列表
+      4、git rebase  是将本地push的分叉在整理成一条直线
+ 13、标签管理
+      1、创建标签：
+          git tag <tagname>用于新建一个标签，默认为HEAD，也可以指定一个commit id；
+          git tag -a <tagname> -m "blablabla..."   可以指定标签信息；
+          git tag   查看标签列表
+          git show  <tagname>  查看标签带的版本内容
+      2、操作标签
+           git push origin <tagname>  将标签推送到远程
+           git push origin --tags  一次性推送全部尚未推送到远程的本地标签
+	   git  tag -d <tagname>  删除标签
+           git push origin :refs/tags/<tagname>  将远程的标签删除
+
+ 14、自定义git
+       1、忽略特殊文件
+           创建一个文件   .gitignore 在文件中写明白自己要忽略的内容
+       2、配置别名
+       git config --global  alias.st stats
+       git config --global alias.unstage 'reset HEAD'
+       如果使用--global表示对当前用户生效，如果不适用global表示只对当前库生效
+       别名配置文件在.git/config 文件里面
+      
+15、git服务器搭建：
+     1、安装git
+     2、创建一个git 用户
+     3、创建登录证书  收集所有需要登录的用户的公钥，就是他们自己的id_rsa.pub文件，把所有公钥导入到/home/git/.ssh/authorized_keys文件里，一行一个。
+     4、 初始化一个git目录  git init --bare  filename 
+            修改目录操作权限 chown -R  git:git filename
+     5、 将shell 禁用 修改/etc/passwd
+            git:x:1001:1001:,,,:/home/git:/bin/bash
+            git:x:1001:1001:,,,:/home/git:/usr/bin/git-shell
+     6、gitclone 
+
+
